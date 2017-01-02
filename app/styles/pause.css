@@ -1,0 +1,31 @@
+/* ==========================
+ * Pause Dialog [pause.html]
+ * ========================== */
+ 
+ /* A static font size can be set since this window modal is not resizable */
+html {
+  font-size: var(--font-size-base);
+}
+
+/* Give the modal a card look */
+body {
+  background-color: var(--color-card);
+}
+
+h3 {
+  font-size: 3em;
+  letter-spacing: 0.5px;
+  margin-bottom: -0.5rem;
+}
+
+hr {
+  width: 65vw;
+  height: 2px;
+  border-radius: var(--corner-radius);
+  margin: 1rem auto;
+  opacity: 0.5;
+}
+
+#resume {
+  margin-top: 2rem;
+}

@@ -1,0 +1,37 @@
+{
+  "scripts": {
+    "start": "electron ./app",
+    "dev": "nodemon --exec \"npm start\" -e \"js css html\"",
+    "pack": "build --dir",
+    "dist": "build",
+    "postinstall": "install-app-deps"
+  },
+  "directories": {
+    "app": "./app"
+  },
+  "build": {
+    "appId": "com.aouerfelli.station-timer",
+    "asarUnpack": [
+      "res/strings.json"
+    ],
+    "win": {
+      "target": [
+        "zip"
+      ]
+    },
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        "dmg"
+      ]
+    },
+    "linux": {
+      "category": "Utility"
+    }
+  },
+  "devDependencies": {
+    "electron": "^1.4.13",
+    "electron-builder": "^10.15.1",
+    "nodemon": "^1.11.0"
+  }
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Station Timer Setup</title>
+    <link rel="stylesheet" href="../styles/_base.css">
+    <link rel="stylesheet" href="../styles/setup.css">
+  </head>
+
+  <body>
+      <main>
+        <form id="setup">
+          <fieldset>
+            <legend>Set Up Your Timer</legend>
+            <!-- Placeholders are used in order for the UI to look as intended (content doesn't matter, it will be hidden) -->
+
+            <div class="form-item">
+              <input type="number" id="duration" name="duration" min="1" max="35999" placeholder=" " required>
+              <label for="duration">Duration (seconds)</label>
+              <div class="bar"></div>
+            </div>
+
+            <div class="form-item">
+              <input type="number" id="break-duration" name="breakDuration" min="1" max="35999" placeholder=" " required>
+              <label for="break-duration">Break Duration (seconds)</label>
+              <div class="bar"></div>
+            </div>
+
+            <div class="form-item">
+              <input type="number" id="num-repeats" name="numRepeats" min="0" placeholder=" " required>
+              <label for="num-repeats">Number of repeats</label>
+              <div class="bar"></div>
+            </div>
+
+            <button type="submit">
+              Start
+              <svg viewBox="0 0 24 24">
+                <path d="M12,20A7,7 0 0,1 5,13A7,7 0 0,1 12,6A7,7 0 0,1 19,13A7,7 0 0,1 12,20M19.03,7.39L20.45,5.97C20,5.46 19.55,5 19.04,4.56L17.62,6C16.07,4.74 14.12,4 12,4A9,9 0 0,0 3,13A9,9 0 0,0 12,22C17,22 21,17.97 21,13C21,10.88 20.26,8.93 19.03,7.39M11,14H13V8H11M15,1H9V3H15V1Z" />
+              </svg>
+            </button>
+
+          </fieldset>
+        </form>
+      </main>
+
+      <!-- An Action Button should ideally be a Custom Element, but v1 of the API is not currently supported (Electron v1.4.13) -->
+      <div class="action-buttons">
+        <div>
+          <button id="exit">
+            <svg viewBox="0 0 24 24">
+              <path d="M19,3H5C3.89,3 3,3.89 3,5V9H5V5H19V19H5V15H3V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M10.08,15.58L11.5,17L16.5,12L11.5,7L10.08,8.41L12.67,11H3V13H12.67L10.08,15.58Z" />
+            </svg>
+          </button>
+          <p>Exit</p>
+        </div>
+      </div>
+
+    <script>
+      require('../renderers/setup.js');
+    </script>
+  </body>
+</html>

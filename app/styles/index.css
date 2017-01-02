@@ -1,0 +1,99 @@
+/* ===============================
+ * Timer Page (Main) [index.html]
+ * =============================== */
+
+body::after {
+  content: '';
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s var(--curve-standard);
+  will-change: opacity;
+}
+
+body.hide::after {
+  background-color: var(--color-background);
+  opacity: 1;
+}
+
+body.dim::after {
+  background-color: black;
+  opacity: 0.5;
+}
+
+#counter {
+  --color-counter: var(--color-grey);
+  color: var(--color-counter);
+  font-size: 25em;
+  will-change: color;
+}
+
+#counter.primary {
+  --color-counter: var(--color-primary);
+}
+
+#counter.red {
+  --color-counter: var(--color-error);
+}
+
+#counter.end {
+  pointer-events: auto;
+  cursor: pointer;
+  font-size: 23em;
+  transition: font-size 1s var(--curve-deceleration),
+              color 0.25s var(--curve-acceleration);
+}
+
+/* This will never trigger because a header is not focusable by default. It is
+ * still declared just in case this behaviour changes. */
+#counter.end:focus {
+  color: var(--color-primary-light);
+}
+
+#counter.end:hover {
+  color: var(--color-primary);
+}
+
+#counter.end:active {
+  color: var(--color-primary-dark);
+}
+
+#progress {
+  --color-progress: var(--color-primary);
+  background-color: var(--color-progress);
+  width: 0;
+  height: 0.25rem;
+  margin: auto;
+  margin-bottom: 1.5rem;
+  border-radius: var(--corner-radius);
+  transition: width 1s linear,
+              height 1s var(--curve-standard),
+              background-color 1s var(--curve-acceleration),
+              opacity 1s var(--curve-deceleration),
+              margin-bottom 0.5s var(--curve-deceleration) 0.5s; /* Starts half a second after initial animation */
+  will-change: width, background-color;
+}
+
+#progress.red {
+  --color-progress: var(--color-error);
+}
+
+#progress.expand {
+  --color-progress: var(--color-grey);
+  width: 100%;
+}
+
+#progress.remove {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  margin-bottom: 0;
+}
+
+#info {
+  font-size: 1.5em;
+}

@@ -1,0 +1,14 @@
+{
+  "name": "station-timer",
+  "productName": "Station Timer",
+  "version": "1.0.0",
+  "description": "A simple timer application that repeatedly counts down for a given amount of times",
+  "author": "Ahmad Ouerfelli <a.ouerf@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aouerfelli/station-timer"
+  },
+  "bugs": "https://github.com/aouerfelli/station-timer/issues",
+  "main": "./main.js"
+}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Station Timer Pause Dialog</title>
+    <link rel="stylesheet" href="../styles/_base.css">
+    <link rel="stylesheet" href="../styles/pause.css">
+  </head>
+
+  <body>
+
+    <main>
+      <h3>Paused</h3>
+      <hr>
+      <!-- Using wrong button type here to make styling easier -->
+      <button id="resume" type="submit" autofocus>
+        Resume
+        <svg viewBox="0 0 24 24">
+            <path d="M8,5.14V19.14L19,12.14L8,5.14Z" />
+        </svg>
+      </button>
+    </main>
+
+    <script>
+      require('../renderers/pause.js');
+    </script>
+  </body>
+</html>

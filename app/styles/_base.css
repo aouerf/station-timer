@@ -1,0 +1,265 @@
+/* ================================================
+ * Accumulated styles common to all HTML documents
+ * ================================================ */
+ /* Note that this stylesheet will be loaded using HTML instead of being
+  * imported directly into the other stylesheets for performance reasons
+  * (importing does not load styles asynchronously). */
+
+/* =====================
+ * Local Fonts [*.html]
+ * ===================== */
+
+ /* Roboto Regular (400) */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto'), local('Roboto-Regular'),
+       url('../res/fonts/Roboto-Regular.woff2') format('woff2');
+}
+
+/* Roboto Bold (700) */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Roboto Bold'), local('Roboto-Bold'),
+       url('../res/fonts/Roboto-Bold.woff2') format('woff2');
+}
+
+/* ===================
+ * Variables [*.html]
+ * =================== */
+
+:root {
+  /* Colors */
+  --color-statusbar: #E0E0E0;
+  --color-appbar: #F5F5F5;
+  --color-background: #FAFAFA;
+  --color-card: #FFF;
+  --color-grey: #9E9E9E;
+  --color-error: #F44336;
+  --color-primary: #3F51B5;
+  --color-primary-light: #5C6BC0;
+  --color-primary-dark: #303F9F;
+
+  /* Fonts */
+  --font-color-dark: rgba(0, 0, 0, 0.87);
+  --font-color-light: rgba(255, 255, 255, 0.87);
+  --font-stack: 'Roboto', sans-serif;
+  --font-size-base: 16px; /* 1em (default) */
+  --font-size-max: calc(var(--font-size-base) * 1.25);
+  --font-size-min: calc(var(--font-size-base) * 0.75);
+
+  /* Constant Measurements */
+  --corner-radius: 2px;
+  --bar-height: 1px;
+
+  /* Transition Timings */
+  --curve-standard: cubic-bezier(0.4, 0.0, 0.2, 1); /* ease in out */
+  --curve-deceleration: cubic-bezier(0.0, 0.0, 0.2, 1); /* ease out */
+  --curve-acceleration: cubic-bezier(0.4, 0.0, 1, 1); /* ease in */
+  --curve-sharp: cubic-bezier(0.4, 0.0, 0.6, 1); /* ease in out */
+
+
+  /* Shadows */
+  --shadow-depth-1: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  --shadow-depth-2: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-depth-3: 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.3);
+  --shadow-depth-4: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.3);
+  --shadow-depth-5: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================
+ * General Styles [*.html]
+ * ======================== */
+
+/* Quick and dirty normalizer */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Setting up REM and EM units scale.
+ * Font size changes on multiples of 1/2 from the base screen size of 800x600. */
+
+html {
+  font-size: var(--font-size-base);
+}
+
+@media (min-width: 1200px), (min-height: 900px) {
+  html {
+    font-size: var(--font-size-max);
+  }
+}
+
+@media (max-width: 400px), (max-height: 300px) {
+  html {
+    font-size: var(--font-size-min);
+  }
+}
+
+/* Body container (background) setup for all pages. */
+body {
+  background: var(--color-background);
+  color: var(--font-color-dark);
+  font-family: var(--font-stack);
+  line-height: normal;
+
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Keep pointer events and cursor properties for inputs and buttons */
+
+input,
+button {
+  pointer-events: auto;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Quick transition remover class (for time-sensitive operations) */
+.skip-transition {
+  transition: none !important;
+}
+
+/* Submit Button styles for all pages */
+
+button[type='submit'] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.75rem;
+  margin: auto;
+  padding: 0 2rem;
+  outline: none;
+  border: none;
+  border-radius: var(--corner-radius);
+  font-size: 1em;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  line-height: 2.75rem;
+  color: var(--font-color-light);
+  background-color: var(--color-primary);
+  box-shadow: var(--shadow-depth-1);
+  transition: background-color 0.3s var(--curve-deceleration),
+              box-shadow 0.3s var(--curve-standard);
+  will-change: background-color, box-shadow;
+}
+
+button[type='submit']:focus {
+  box-shadow: var(--shadow-depth-2);
+}
+
+button[type='submit']:hover {
+  background-color: var(--color-primary-light);
+  box-shadow: var(--shadow-depth-3);
+}
+
+button[type='submit']:active {
+  background-color: var(--color-primary-dark);
+}
+
+button[type='submit'] svg {
+  fill: var(--font-color-light);
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-left: 0.5rem;
+}
+
+/* Action Button styles for all pages (would preferably be a Custom Element, but v1 of the API is not currently supported (Electron v1.4.13)) */
+
+.action-buttons {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+.action-buttons div {
+  display: inline-flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-buttons div button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem;
+  margin: 0.75rem;
+  margin-top: 0;
+  outline: none;
+  border: none;
+  background-color: transparent;
+}
+
+.action-buttons div button::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background-color: var(--color-grey);
+  opacity: 0;
+  transition: all 0.3s var(--curve-standard);
+  transition-property: width, height, opacity;
+  /* Since there are not that many buttons on each page, it's fine to give each of them a layer initially instead of dynamically */
+  will-change: width, height, opacity;
+}
+
+.action-buttons div button:active::before {
+  width: 3rem;
+  height: 3rem;
+  opacity: 0.3;
+}
+
+.action-buttons div button svg {
+  width: 2.25rem;
+  height: 2.25rem;
+  fill: var(--color-grey);
+  transition: fill 0.3s var(--curve-standard);
+  will-change: fill;
+}
+
+.action-buttons div button:focus svg {
+  fill: var(--color-primary-light);
+}
+
+.action-buttons div button:hover svg {
+  fill: var(--color-primary);
+}
+
+.action-buttons div button:active svg {
+  fill: var(--color-primary-dark);
+}
+
+.action-buttons div p {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8em;
+  letter-spacing: 0.5px;
+  border-radius: var(--corner-radius);
+  color: var(--font-color-light);
+  background-color: var(--font-color-dark);
+  opacity: 0;
+  transition: opacity 0.3s var(--curve-sharp);
+}
+
+.action-buttons div button:hover ~ p {
+  opacity: 0.7;
+}

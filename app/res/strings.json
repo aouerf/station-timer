@@ -1,0 +1,10 @@
+{
+  "counterText": {
+    "end": "0"
+  },
+  "infoText": {
+    "active": "Complete your activity",
+    "coolDown": "Go to your next station",
+    "complete": "Return to your original station"
+  }
+}
