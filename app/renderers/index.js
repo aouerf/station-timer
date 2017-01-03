@@ -1,33 +1,28 @@
 const {ipcRenderer, remote} = require('electron');
+const webContents = remote.getCurrentWebContents();
 
 const counterTextView = document.getElementById('counter');
 const secondProgressBar = document.getElementById('progress');
 const infoTextView = document.getElementById('info');
 const pauseButton = document.getElementById('pause');
 const restartButton = document.getElementById('restart');
+const muteOnButton = document.getElementById('mute-on');
+const muteOffButton = document.getElementById('mute-off');
 const exitButton = document.getElementById('exit');
 
-const beepAudio = new Audio('../res/audio/beep.wav');
+const beepAudio = new Audio('../assets/audio/beep.wav');
 
 // Object containing strings used in the counter
-// I know it's pretty ugly, but I'm sure you've seen worse
-const text = (() => {
-  try {
-    return require('./../res/strings.json');
-  } catch (err) {
-    // If the JSON wasn't found or couldn't be parsed, then set default values
-    return {
-      counterText: {
-        end: '0'
-      },
-      infoText: {
-        active: 'Complete your activity',
-        coolDown: 'Go to your next station',
-        complete: 'Return to your original station'
-      }
-    };
+const text = {
+  counterText: {
+    end: '0'
+  },
+  infoText: {
+    active: 'Complete your activity',
+    coolDown: 'Go to your next station',
+    complete: 'Return to your original station'
   }
-})();
+};
 
 // Object containing values for duration, break duration and number of repeats
 let settings;
@@ -41,8 +36,20 @@ pauseButton.addEventListener('click', () => {
 });
 
 restartButton.addEventListener('click', () =>
-  remote.getCurrentWebContents().send('start-timer', settings)
+  webContents.send('start-timer', settings)
 );
+
+muteOnButton.addEventListener('click', () => {
+  webContents.setAudioMuted(true);
+  muteOnButton.parentElement.style.display = 'none';
+  muteOffButton.parentElement.style.display = '';
+});
+
+muteOffButton.addEventListener('click', () => {
+  webContents.setAudioMuted(false);
+  muteOffButton.parentElement.style.display = 'none';
+  muteOnButton.parentElement.style.display = '';
+});
 
 exitButton.addEventListener('click', () =>
   ipcRenderer.send('exit')
@@ -64,7 +71,7 @@ counterTextView.addEventListener('click', () => {
  *
  * @param  generatorFn the generator function that will yield Promises.
  */
-function async(generatorFn) {
+function async (generatorFn) {
   function continuer(verb, arg) {
     let result;
     try {
@@ -83,7 +90,7 @@ function async(generatorFn) {
   return onResolved();
 }
 
-function skipTransition(elements, action) {
+function skipTransition (elements, action) {
   // If a single element is given, place it in an array
   if (elements.constructor !== Array) {
     elements = [elements];
@@ -99,13 +106,13 @@ function skipTransition(elements, action) {
   });
 }
 
-function setProgressBar() {
+function setProgressBar () {
   skipTransition(secondProgressBar, () =>
     secondProgressBar.classList.remove('expand'));
   secondProgressBar.classList.add('expand');
 }
 
-function getFormattedTime(seconds) {
+function getFormattedTime (seconds) {
   // Get units of time (from seconds up to hours)
   let hh = parseInt(seconds / 3600, 10);
   let mm = parseInt((seconds % 3600) / 60, 10);
@@ -121,19 +128,19 @@ function getFormattedTime(seconds) {
   return hh + mm + ss;
 }
 
-function sleep(ms) {
+function sleep (ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function waitPause() {
+function pauseWait () {
   // The pause-wait channel will return a value of false when the pause modal is
   // closed, which we can set to the paused flag. When the flag is set, the
   // Promise will be resolved.
   return Promise.resolve(paused = ipcRenderer.sendSync('pause-wait'));
 }
 
-function countdown(duration, view, onEachSecond) {
-  function action() {
+function countdown (duration, view, onEachSecond) {
+  function action () {
     // Run the onEachSecond function if it is given
     if (typeof onEachSecond === 'function') {
       onEachSecond();
@@ -145,15 +152,15 @@ function countdown(duration, view, onEachSecond) {
     // We'll be decrementing duration each second in action()
     while (duration > 0) {
       if (paused) {
-        yield waitPause();
+        yield pauseWait();
       } else {
         action();
         yield sleep(1000);
       }
     }
-    // Check before ending countdown
+    // Check for pause before ending countdown
     if (paused) {
-      yield waitPause();
+      yield pauseWait();
     }
   }));
 }
@@ -161,7 +168,7 @@ function countdown(duration, view, onEachSecond) {
 ipcRenderer.on('start-timer', (evt, userSettings) => {
   let {duration, breakDuration, numRepeats} = settings = userSettings;
 
-  function resetTimer() {
+  function resetTimer () {
     // Reset elements to their intended initial visibility
     restartButton.parentElement.style.display = 'none';
     pauseButton.parentElement.style.display = '';
@@ -172,7 +179,7 @@ ipcRenderer.on('start-timer', (evt, userSettings) => {
     infoTextView.classList = '';
   }
 
-  function durationCountdown() {
+  function durationCountdown () {
     counterTextView.classList.remove('red');
     counterTextView.classList.add('primary');
     secondProgressBar.classList.remove('red');
@@ -180,7 +187,7 @@ ipcRenderer.on('start-timer', (evt, userSettings) => {
     return countdown(duration, counterTextView, setProgressBar);
   }
 
-  function breakDurationCountdown() {
+  function breakDurationCountdown () {
     counterTextView.classList.remove('primary');
     counterTextView.classList.add('red');
     secondProgressBar.classList.add('red');
@@ -191,7 +198,7 @@ ipcRenderer.on('start-timer', (evt, userSettings) => {
     });
   }
 
-  function endTimer() {
+  function endTimer () {
     // Setting end classes
     secondProgressBar.classList.add('remove');
     skipTransition(counterTextView, () =>

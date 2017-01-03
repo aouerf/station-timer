@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <title>Station Timer Setup</title>
-    <link rel="stylesheet" href="../styles/_base.css">
+    <link rel="stylesheet" href="../styles/base.css">
     <link rel="stylesheet" href="../styles/setup.css">
   </head>
 
@@ -12,16 +12,16 @@
         <form id="setup">
           <fieldset>
             <legend>Set Up Your Timer</legend>
-            <!-- Placeholders are used in order for the UI to look as intended (content doesn't matter, it will be hidden) -->
+            <!-- Placeholder attribute is used to make UI function as intended (content doesn't matter, it will be hidden) -->
 
             <div class="form-item">
-              <input type="number" id="duration" name="duration" min="1" max="35999" placeholder=" " required>
+              <input type="number" id="duration" name="duration" min="0" max="35999" placeholder=" " required>
               <label for="duration">Duration (seconds)</label>
               <div class="bar"></div>
             </div>
 
             <div class="form-item">
-              <input type="number" id="break-duration" name="breakDuration" min="1" max="35999" placeholder=" " required>
+              <input type="number" id="break-duration" name="breakDuration" min="0" max="35999" placeholder=" " required>
               <label for="break-duration">Break Duration (seconds)</label>
               <div class="bar"></div>
             </div>

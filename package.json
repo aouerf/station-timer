@@ -11,9 +11,6 @@
   },
   "build": {
     "appId": "com.aouerfelli.station-timer",
-    "asarUnpack": [
-      "res/strings.json"
-    ],
     "win": {
       "target": [
         "zip"
@@ -31,7 +28,7 @@
   },
   "devDependencies": {
     "electron": "^1.4.13",
-    "electron-builder": "^10.15.1",
+    "electron-builder": "^10.17.1",
     "nodemon": "^1.11.0"
   }
 }

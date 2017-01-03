@@ -10,25 +10,24 @@ body::after {
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0;
-  transition: opacity 0.5s var(--curve-standard);
-  will-change: opacity;
+  background-color: transparent;
+  /* No transitions are added here to prioritize reliability */
+  will-change: background-color;
 }
 
 body.hide::after {
   background-color: var(--color-background);
-  opacity: 1;
 }
 
 body.dim::after {
-  background-color: black;
-  opacity: 0.5;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 #counter {
   --color-counter: var(--color-grey);
   color: var(--color-counter);
-  font-size: 25em;
+  /* Making sure font has same width on all screens since it will be changing constantly */
+  font-size: 25vw;
   will-change: color;
 }
 
@@ -51,15 +50,15 @@ body.dim::after {
 /* This will never trigger because a header is not focusable by default. It is
  * still declared just in case this behaviour changes. */
 #counter.end:focus {
-  color: var(--color-primary-light);
+  --color-counter: var(--color-primary-light);
 }
 
 #counter.end:hover {
-  color: var(--color-primary);
+  --color-counter: var(--color-primary);
 }
 
 #counter.end:active {
-  color: var(--color-primary-dark);
+  --color-counter: var(--color-primary-dark);
 }
 
 #progress {
@@ -95,5 +94,5 @@ body.dim::after {
 }
 
 #info {
-  font-size: 1.5em;
+  font-size: 2em;
 }

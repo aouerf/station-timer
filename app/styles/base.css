@@ -1,9 +1,9 @@
 /* ================================================
  * Accumulated styles common to all HTML documents
  * ================================================ */
- /* Note that this stylesheet will be loaded using HTML instead of being
-  * imported directly into the other stylesheets for performance reasons
-  * (importing does not load styles asynchronously). */
+/* Note that this stylesheet will be loaded using HTML instead of being
+ * imported directly into the other stylesheets for performance reasons
+ * (importing does not load styles asynchronously). */
 
 /* =====================
  * Local Fonts [*.html]
@@ -15,7 +15,7 @@
   font-style: normal;
   font-weight: 400;
   src: local('Roboto'), local('Roboto-Regular'),
-       url('../res/fonts/Roboto-Regular.woff2') format('woff2');
+       url('../assets/fonts/Roboto-Regular.woff2') format('woff2');
 }
 
 /* Roboto Bold (700) */
@@ -24,7 +24,7 @@
   font-style: normal;
   font-weight: 700;
   src: local('Roboto Bold'), local('Roboto-Bold'),
-       url('../res/fonts/Roboto-Bold.woff2') format('woff2');
+       url('../assets/fonts/Roboto-Bold.woff2') format('woff2');
 }
 
 /* ===================
@@ -33,8 +33,6 @@
 
 :root {
   /* Colors */
-  --color-statusbar: #E0E0E0;
-  --color-appbar: #F5F5F5;
   --color-background: #FAFAFA;
   --color-card: #FFF;
   --color-grey: #9E9E9E;
@@ -62,7 +60,7 @@
   --curve-sharp: cubic-bezier(0.4, 0.0, 0.6, 1); /* ease in out */
 
 
-  /* Shadows */
+  /* Shadows (from MaterializeCSS) */
   --shadow-depth-1: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
   --shadow-depth-2: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
   --shadow-depth-3: 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.3);
@@ -252,7 +250,6 @@ button[type='submit'] svg {
   display: inline-block;
   padding: 0.25rem 0.5rem;
   font-size: 0.8em;
-  letter-spacing: 0.5px;
   border-radius: var(--corner-radius);
   color: var(--font-color-light);
   background-color: var(--font-color-dark);

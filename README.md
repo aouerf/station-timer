@@ -1,4 +1,5 @@
 # Station Timer
+[![GitHub release](https://img.shields.io/badge/download-latest-blue.svg)](https://github.com/aouerfelli/station-timer/releases/latest)
 
 A minimal timer application built with [Electron](http://electron.atom.io) that
 counts down and loops for a given number of stations. This was originally
@@ -7,7 +8,9 @@ stations set up and would allocate a certain amount of time to stay at each
 station, and would then give some additional time to clean up and go to the next
 station.
 
-## Releases (NOT AVAILABE YET)
+![](screenshots.gif)
+
+## Releases
 There are builds available for Windows and macOS, since those are the only
 platforms I am able to use and test on at the moment. If you would like to
 build for your own platform, you can follow the steps [below](#Build).

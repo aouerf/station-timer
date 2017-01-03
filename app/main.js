@@ -2,7 +2,7 @@ const {app, BrowserWindow, ipcMain} = require('electron');
 
 let mainWindow, setupWindow, pauseWindow;
 
-function createMainWindow() {
+function createMainWindow () {
   mainWindow = new BrowserWindow({
     fullscreen: true,
     frame: false
@@ -15,7 +15,7 @@ function createMainWindow() {
   mainWindow.on('closed', () => mainWindow = null);
 }
 
-function createSetupModalWindow() {
+function createSetupModalWindow () {
   setupWindow = new BrowserWindow({
     parent: mainWindow,
     modal: true,
@@ -33,7 +33,7 @@ function createSetupModalWindow() {
   setupWindow.on('closed', () => setupWindow = null);
 }
 
-function createPauseModalWindow() {
+function createPauseModalWindow () {
   mainWindow.webContents.executeJavaScript(
     'document.body.classList.add(\'dim\')'
   );
@@ -62,16 +62,15 @@ function createPauseModalWindow() {
   });
 }
 
-function createStartWindows() {
+function createStartWindows () {
   createMainWindow();
   createSetupModalWindow();
 }
 
-function exitApp() {
+function exitApp () {
   // Do not exit the program on macOS (standard OS-specific behaviour).
-  // Instead, close all open windows.
+  // Instead, lose app focus and close all open windows.
   if (process.platform === 'darwin') {
-    // Lose app and window focus before closing windows
     app.hide();
     BrowserWindow.getAllWindows().forEach(win => win.close());
   } else {
