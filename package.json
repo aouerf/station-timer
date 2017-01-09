@@ -13,6 +13,7 @@
     "appId": "com.aouerfelli.station-timer",
     "win": {
       "target": [
+        "nsis",
         "zip"
       ]
     },
@@ -28,7 +29,7 @@
   },
   "devDependencies": {
     "electron": "^1.4.13",
-    "electron-builder": "^10.17.1",
+    "electron-builder": "^10.17.3",
     "nodemon": "^1.11.0"
   }
 }
