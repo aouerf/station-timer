@@ -2,7 +2,6 @@ const { ipcRenderer, remote } = require('electron');
 
 const setupForm = document.forms.namedItem('setup');
 const setupFormInputs = Array.from(setupForm.querySelectorAll('input[type="number"]'));
-const exitButton = document.getElementById('exit');
 
 const checkValidInput = (value, min, max) =>
   // The handling of empty inputs is done in CSS. If the input is not empty and
@@ -24,16 +23,13 @@ setupFormInputs.forEach((input) => {
 setupForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
 
-  const valid = setupFormInputs.every((input) => {
-    const invalid = input.classList.contains('error');
-    if (invalid) {
-      // If any of the form inputs contain errors, focus on it
-      input.focus();
-    }
-    return !invalid;
-  });
   // Return early (don't finish submitting the form) if not all inputs are valid
-  if (!valid) {
+  if (setupFormInputs.every((input) => {
+    const invalid = input.classList.contains('error');
+    // If any of the form inputs contain errors, focus on it
+    if (invalid) input.focus();
+    return invalid;
+  })) {
     return;
   }
 
@@ -48,4 +44,4 @@ setupForm.addEventListener('submit', (evt) => {
   win.destroy();
 });
 
-exitButton.addEventListener('click', () => ipcRenderer.send('exit'));
+document.getElementById('exit').addEventListener('click', () => ipcRenderer.send('exit'));
