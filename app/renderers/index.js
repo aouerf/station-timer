@@ -1,27 +1,30 @@
-const {ipcRenderer, remote} = require('electron');
+const { ipcRenderer, remote } = require('electron');
+
 const webContents = remote.getCurrentWebContents();
 
-const counterTextView = document.getElementById('counter');
-const secondProgressBar = document.getElementById('progress');
-const infoTextView = document.getElementById('info');
-const pauseButton = document.getElementById('pause');
-const restartButton = document.getElementById('restart');
-const muteOnButton = document.getElementById('mute-on');
-const muteOffButton = document.getElementById('mute-off');
-const exitButton = document.getElementById('exit');
+const domElements = {
+  counterTextView: document.getElementById('counter'),
+  secondProgressBar: document.getElementById('progress'),
+  infoTextView: document.getElementById('info'),
+  pauseButton: document.getElementById('pause'),
+  restartButton: document.getElementById('restart'),
+  muteOnButton: document.getElementById('mute-on'),
+  muteOffButton: document.getElementById('mute-off'),
+  exitButton: document.getElementById('exit'),
+};
 
 const beepAudio = new Audio('../assets/audio/beep.wav');
 
 // Object containing strings used in the counter
 const text = {
   counterText: {
-    end: '0'
+    end: '0',
   },
   infoText: {
     active: 'Complete your activity',
     coolDown: 'Go to your next station',
-    complete: 'Return to your original station'
-  }
+    complete: 'Return to your original station',
+  },
 };
 
 // Object containing values for duration, break duration and number of repeats
@@ -30,37 +33,31 @@ let settings;
 // Flag indicating whether or not the program is currently in a paused state
 let paused = false;
 
-pauseButton.addEventListener('click', () => {
+domElements.pauseButton.addEventListener('click', () => {
   paused = true;
   ipcRenderer.send('pause');
 });
 
-restartButton.addEventListener('click', () =>
-  webContents.send('start-timer', settings)
-);
+domElements.restartButton.addEventListener('click', () => webContents.send('start-timer', settings));
 
-muteOnButton.addEventListener('click', () => {
+domElements.muteOnButton.addEventListener('click', () => {
   webContents.setAudioMuted(true);
-  muteOnButton.parentElement.style.display = 'none';
-  muteOffButton.parentElement.style.display = '';
+  domElements.muteOnButton.parentElement.style.display = 'none';
+  domElements.muteOffButton.parentElement.style.display = '';
 });
 
-muteOffButton.addEventListener('click', () => {
+domElements.muteOffButton.addEventListener('click', () => {
   webContents.setAudioMuted(false);
-  muteOffButton.parentElement.style.display = 'none';
-  muteOnButton.parentElement.style.display = '';
+  domElements.muteOffButton.parentElement.style.display = 'none';
+  domElements.muteOnButton.parentElement.style.display = '';
 });
 
-exitButton.addEventListener('click', () =>
-  ipcRenderer.send('exit')
-);
+domElements.exitButton.addEventListener('click', () => ipcRenderer.send('exit'));
 
-counterTextView.addEventListener('click', () => {
-  // Since the counter has no pointer events when counting, this will only
-  // trigger at the end when the end class is added to the counter, which
-  // enables pointer events.
-  ipcRenderer.send('exit');
-});
+// Since the counter has no pointer events when counting, this will only
+// trigger at the end when the end class is added to the counter, which
+// enables pointer events.
+domElements.counterTextView.addEventListener('click', () => ipcRenderer.send('exit'));
 
 /**
  * This function allows us to use Promises with generator functions, much like
@@ -71,8 +68,8 @@ counterTextView.addEventListener('click', () => {
  *
  * @param  generatorFn the generator function that will yield Promises.
  */
-function async (generatorFn) {
-  function continuer(verb, arg) {
+const async = (generatorFn) => {
+  const continuer = (verb, arg) => {
     let result;
     try {
       result = generator[verb](arg);
@@ -82,15 +79,15 @@ function async (generatorFn) {
     return result.done ?
            result.value :
            Promise.resolve(result.value).then(onResolved, onRejected);
-  }
+  };
 
   let generator = generatorFn();
   let onResolved = continuer.bind(continuer, 'next');
   let onRejected = continuer.bind(continuer, 'throw');
   return onResolved();
-}
+};
 
-function skipTransition (elements, action) {
+const skipTransition = (elements, action) => {
   // If a single element is given, place it in an array
   if (elements.constructor !== Array) {
     elements = [elements];
@@ -104,15 +101,15 @@ function skipTransition (elements, action) {
     element.offsetHeight; // Trigger CSS reflow to flush changes
     element.classList.remove('skip-transition');
   });
-}
+};
 
-function setProgressBar () {
-  skipTransition(secondProgressBar, () =>
-    secondProgressBar.classList.remove('expand'));
-  secondProgressBar.classList.add('expand');
-}
+const setProgressBar = () => {
+  skipTransition(domElements.secondProgressBar, () =>
+    domElements.secondProgressBar.classList.remove('expand'));
+  domElements.secondProgressBar.classList.add('expand');
+};
 
-function getFormattedTime (seconds) {
+const getFormattedTime = (seconds) => {
   // Get units of time (from seconds up to hours)
   let hh = parseInt(seconds / 3600, 10);
   let mm = parseInt((seconds % 3600) / 60, 10);
@@ -126,27 +123,23 @@ function getFormattedTime (seconds) {
        ss < 10 ? '0' + ss : ss;
 
   return hh + mm + ss;
-}
+};
 
-function sleep (ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-function pauseWait () {
-  // The pause-wait channel will return a value of false when the pause modal is
-  // closed, which we can set to the paused flag. When the flag is set, the
-  // Promise will be resolved.
-  return Promise.resolve(paused = ipcRenderer.sendSync('pause-wait'));
-}
+// The pause-wait channel will return a value of false when the pause modal is
+// closed, which we can set to the paused flag. When the flag is set, the
+// Promise will be resolved.
+const pauseWait = () => Promise.resolve(paused = ipcRenderer.sendSync('pause-wait'));
 
-function countdown (duration, view, onEachSecond) {
-  function action () {
+const countdown = (duration, view, onEachSecond) => {
+  const action = () => {
     // Run the onEachSecond function if it is given
     if (typeof onEachSecond === 'function') {
       onEachSecond();
     }
     view.textContent = getFormattedTime(duration--);
-  }
+  };
 
   return Promise.resolve(async(function* () {
     // We'll be decrementing duration each second in action()
@@ -163,59 +156,60 @@ function countdown (duration, view, onEachSecond) {
       yield pauseWait();
     }
   }));
-}
+};
 
 ipcRenderer.on('start-timer', (evt, userSettings) => {
-  let {duration, breakDuration, numRepeats} = settings = userSettings;
+  const { duration, breakDuration, numRepeats } = userSettings;
+  settings = userSettings;
 
-  function resetTimer () {
+  const resetTimer = () => {
     // Reset elements to their intended initial visibility
-    restartButton.parentElement.style.display = 'none';
-    pauseButton.parentElement.style.display = '';
+    domElements.restartButton.parentElement.style.display = 'none';
+    domElements.pauseButton.parentElement.style.display = '';
     // Remove all classes from the views
     document.body.classList = '';
-    counterTextView.classList = '';
-    secondProgressBar.classList = '';
-    infoTextView.classList = '';
-  }
+    domElements.counterTextView.classList = '';
+    domElements.secondProgressBar.classList = '';
+    domElements.infoTextView.classList = '';
+  };
 
-  function durationCountdown () {
-    counterTextView.classList.remove('red');
-    counterTextView.classList.add('primary');
-    secondProgressBar.classList.remove('red');
-    infoTextView.textContent = text.infoText.active;
-    return countdown(duration, counterTextView, setProgressBar);
-  }
+  const durationCountdown = () => {
+    domElements.counterTextView.classList.remove('red');
+    domElements.counterTextView.classList.add('primary');
+    domElements.secondProgressBar.classList.remove('red');
+    domElements.infoTextView.textContent = text.infoText.active;
+    return countdown(duration, domElements.counterTextView, setProgressBar);
+  };
 
-  function breakDurationCountdown () {
-    counterTextView.classList.remove('primary');
-    counterTextView.classList.add('red');
-    secondProgressBar.classList.add('red');
-    infoTextView.textContent = text.infoText.coolDown;
-    return countdown(breakDuration, counterTextView, () => {
+  const breakDurationCountdown = () => {
+    domElements.counterTextView.classList.remove('primary');
+    domElements.counterTextView.classList.add('red');
+    domElements.secondProgressBar.classList.add('red');
+    domElements.infoTextView.textContent = text.infoText.coolDown;
+    return countdown(breakDuration, domElements.counterTextView, () => {
       beepAudio.play();
       setProgressBar();
     });
-  }
+  };
 
-  function endTimer () {
+  const endTimer = () => {
     // Setting end classes
-    secondProgressBar.classList.add('remove');
-    skipTransition(counterTextView, () =>
-      counterTextView.classList.remove('red'));
-    counterTextView.classList.add('end');
+    domElements.secondProgressBar.classList.add('remove');
+    skipTransition(domElements.counterTextView, () =>
+      domElements.counterTextView.classList.remove('red'));
+    domElements.counterTextView.classList.add('end');
     // Setting end text to views
-    counterTextView.textContent = text.counterText.end;
-    infoTextView.textContent = text.infoText.complete;
+    domElements.counterTextView.textContent = text.counterText.end;
+    domElements.infoTextView.textContent = text.infoText.complete;
     // Setting end visibility for Action Buttons
-    pauseButton.parentElement.style.display = 'none';
-    restartButton.parentElement.style.display = '';
-  }
+    domElements.pauseButton.parentElement.style.display = 'none';
+    domElements.restartButton.parentElement.style.display = '';
+  };
 
   async(function* () {
     resetTimer();
     // Start the timer: repeat for however many stations there are
-    for (let i = 0; i < numRepeats; i++) {
+    for (let i = 0; i < numRepeats; i += 1) {
       yield durationCountdown();
       yield breakDurationCountdown();
     }

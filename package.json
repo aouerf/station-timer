@@ -1,7 +1,26 @@
 {
+  "name": "station-timer",
+  "productName": "Station Timer",
+  "version": "1.1.0",
+  "description": "A simple timer application that repeatedly counts down for a given amount of times",
+  "author": "Ahmad Ouerfelli <a.ouerf@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "station",
+    "timer"
+  ],
+  "homepage": "https://github.com/aouerfelli/station-timer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aouerfelli/station-timer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aouerfelli/station-timer/issues"
+  },
+  "main": "./app/main.js",
   "scripts": {
-    "start": "electron ./app",
-    "dev": "nodemon --exec \"npm start\" -e \"js css html\"",
+    "start": "electron .",
+    "watch": "nodemon --exec \"npm start\" -e \"js css html\"",
     "pack": "build --dir",
     "dist": "build",
     "postinstall": "install-app-deps"
@@ -28,8 +47,11 @@
     }
   },
   "devDependencies": {
-    "electron": "^1.4.13",
+    "electron": "^1.6.3",
     "electron-builder": "^10.17.3",
+    "eslint": "^3.18.0",
+    "eslint-config-airbnb-base": "^11.1.1",
+    "eslint-plugin-import": "^2.2.0",
     "nodemon": "^1.11.0"
   }
 }
