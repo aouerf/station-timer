@@ -36,14 +36,14 @@ let paused = false;
 // If a single element is given, place it in an array
 const ensureArray = arr => (Array.isArray(arr) ? arr : [arr]);
 
-// Executes a function if it is given (bad design is used to make this a one-liner)
-const optionalCallback = func => typeof func !== 'function' || func();
+// Executes a function if it is given and if not then a noop function is executed
+const optionalCallback = func => (typeof func === 'function' ? func : () => {})();
 
 const skipTransition = (elements, action) => {
   optionalCallback(action);
   ensureArray(elements).forEach((el) => {
     el.classList.add('skip-transition');
-    el.offsetHeight; // Trigger CSS reflow to flush changes
+    (() => el.offsetHeight)(); // Trigger CSS reflow to flush changes
     el.classList.remove('skip-transition');
   });
 };
@@ -179,13 +179,13 @@ ipcRenderer.on('start-timer', (evt, userSettings) => {
     domElements.buttons.restart.parentElement.style.display = '';
   };
 
+  const countdownAction = () => Promise.resolve(durationCountdown().then(breakDurationCountdown));
+
   (async () => {
     resetTimer();
-    // Start the timer: repeat for however many stations there are
-    for (let i = 0; i < numRepeats; i++) {
-      await durationCountdown();
-      await breakDurationCountdown();
-    }
+    await Promise.all(
+      Array(numRepeats).fill(countdownAction)
+      .map(action => Promise.resolve().then(action)));
     endTimer();
   })();
 });
