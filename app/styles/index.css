@@ -23,6 +23,11 @@ body.dim::after {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
+#remaining {
+  font-size: 1.25em;
+  opacity: 0.75;
+}
+
 #counter {
   --color-counter: var(--color-grey);
   color: var(--color-counter);

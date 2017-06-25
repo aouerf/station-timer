@@ -1,6 +1,8 @@
 const { ipcRenderer, remote } = require('electron');
+const numberToWords = require('number-to-words');
 
 const domElements = {
+  remaining: document.getElementById('remaining'),
   counter: document.getElementById('counter'),
   progress: document.getElementById('progress'),
   info: document.getElementById('info'),
@@ -18,6 +20,11 @@ const domElements = {
 
 // Object containing strings used in the counter
 const text = {
+  remaining: {
+    multiple: ' stations remaining',
+    single: 'Last station',
+    none: 'No more stations',
+  },
   counter: {
     end: '0',
   },
@@ -33,6 +40,12 @@ let settings = null;
 
 // Flag indicating whether or not the program is currently in a paused state
 let paused = false;
+
+// If a string is given and it is not empty, convert it to a "Sentence case" string
+const toSentenceCase = str =>
+  ((typeof str === 'string' && str.length > 0) ?
+    str.charAt(0).toUpperCase() + str.substring(1).toLowerCase() :
+    '');
 
 // If a single element is given, place it in an array
 const ensureArray = arr =>
@@ -197,6 +210,23 @@ ipcRenderer.on('start-timer', (evt, userSettings) => {
     domElements.buttons.restart.parentElement.style.display = '';
   };
 
+  const setRemainingText = (stationsLeft) => {
+    let stationsLeftText = '';
+    // Determine text to be displayed on the stations remaining counter
+    // The text is based on the number of stations left
+    if (stationsLeft === 0) {
+      stationsLeftText = text.remaining.none;
+    } else if (stationsLeft === 1) {
+      stationsLeftText = text.remaining.single;
+    } else {
+      // Concatenate the word form of the number of stations left with the text
+      stationsLeftText = toSentenceCase(numberToWords.toWords(stationsLeft));
+      stationsLeftText += text.remaining.multiple;
+    }
+    // Set the calculated text to the stations remaining counter view
+    domElements.remaining.textContent = stationsLeftText;
+  };
+
   const countdownAction = async () => {
     await durationCountdown();
     await breakDurationCountdown();
@@ -204,9 +234,11 @@ ipcRenderer.on('start-timer', (evt, userSettings) => {
 
   (async () => {
     resetTimer();
-    for (let stationsLeft = numRepeats - 1; stationsLeft >= 0; stationsLeft -= 1) {
-      // TODO: display the stations left value on the view
+    for (let stationsLeft = numRepeats; stationsLeft > 0; stationsLeft -= 1) {
+      setRemainingText(stationsLeft);
       await countdownAction();
+      // This is called here to update the counter text before the loop is broken
+      setRemainingText(stationsLeft - 1);
     }
     endTimer();
   })();

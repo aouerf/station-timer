@@ -46,12 +46,15 @@
       "category": "Utility"
     }
   },
+  "dependencies": {
+    "number-to-words": "^1.2.3"
+  },
   "devDependencies": {
-    "electron": "^1.6.3",
+    "electron": "^1.6.11",
     "electron-builder": "^10.17.3",
     "eslint": "^3.19.0",
-    "eslint-config-airbnb-base": "^11.1.1",
-    "eslint-plugin-import": "^2.2.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.6.0",
     "nodemon": "^1.11.0"
   }
 }
