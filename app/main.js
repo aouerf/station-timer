@@ -1,8 +1,18 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 
+const DEVELOPMENT = true;
+
 let mainWindow = null;
 let setupWindow = null;
 let pauseWindow = null;
+
+const initializeWindow = (windowType, windowName) => {
+  windowType.loadURL(`file://${__dirname}/views/${windowName}.html`);
+  windowType.setMenu(null);
+  windowType.webContents.openDevTools(DEVELOPMENT);
+
+  windowType.once('ready-to-show', windowType.show);
+};
 
 const exitApp = () => {
   // Do not exit the program on macOS (standard OS-specific behaviour).
@@ -20,10 +30,7 @@ const createMainWindow = () => {
     fullscreen: true,
     frame: false,
   });
-  mainWindow.loadURL(`file://${__dirname}/views/index.html`);
-  mainWindow.setMenu(null);
-
-  mainWindow.once('ready-to-show', mainWindow.show);
+  initializeWindow(mainWindow, 'index');
 
   mainWindow.on('closed', () => (mainWindow = null));
 };
@@ -36,10 +43,7 @@ const createSetupModalWindow = () => {
     minHeight: 300,
     frame: false,
   });
-  setupWindow.loadURL(`file://${__dirname}/views/setup.html`);
-  setupWindow.setMenu(null);
-
-  setupWindow.once('ready-to-show', setupWindow.show);
+  initializeWindow(setupWindow, 'setup');
 
   setupWindow.on('close', exitApp);
 
@@ -58,10 +62,7 @@ const createPauseModalWindow = () => {
     closable: false,
     frame: false,
   });
-  pauseWindow.loadURL(`file://${__dirname}/views/pause.html`);
-  pauseWindow.setMenu(null);
-
-  pauseWindow.once('ready-to-show', pauseWindow.show);
+  initializeWindow(pauseWindow, 'pause');
 
   pauseWindow.on('close', exitApp);
 

@@ -11,9 +11,10 @@ const domElements = {
     muteOff: document.getElementById('mute-off'),
     exit: document.getElementById('exit'),
   },
+  audio: {
+    beep: document.getElementById('beep'),
+  },
 };
-
-const beepAudio = new Audio('../assets/audio/beep.wav');
 
 // Object containing strings used in the counter
 const text = {
@@ -34,10 +35,12 @@ let settings = null;
 let paused = false;
 
 // If a single element is given, place it in an array
-const ensureArray = arr => (Array.isArray(arr) ? arr : [arr]);
+const ensureArray = arr =>
+  (Array.isArray(arr) ? arr : [arr]);
 
 // Executes a function if it is given and if not then a noop function is executed
-const optionalCallback = func => (typeof func === 'function' ? func : () => {})();
+const optionalCallback = func =>
+  (typeof func === 'function' ? func : () => {})();
 
 const skipTransition = (elements, action) => {
   optionalCallback(action);
@@ -55,41 +58,56 @@ const setProgressBar = () => {
 };
 
 const getFormattedTime = (seconds) => {
-  // Get units of time (from seconds up to hours)
+  // --- Get units of time (from seconds up to hours) ---
   let hh = parseInt(seconds / 3600, 10);
   let mm = parseInt((seconds % 3600) / 60, 10);
   let ss = parseInt(seconds % 60, 10);
 
-  // Displaying or hiding units based on length of time (up to hours)
+  // --- Displaying or hiding units based on length of time (up to hours) ---
   // Hours
-  if (hh > 0) hh = `${hh}:`;
-  else hh = '';
+  if (hh > 0) {
+    hh = `${hh}:`;
+  } else {
+    hh = '';
+  }
   // Minutes
-  if (hh === '' && mm <= 0) mm = '';
-  else if (hh !== '' && mm < 10) mm = `0${mm}:`;
-  else mm = `${mm}:`;
+  if (hh === '' && mm <= 0) {
+    mm = '';
+  } else if (hh !== '' && mm < 10) {
+    mm = `0${mm}:`;
+  } else {
+    mm = `${mm}:`;
+  }
   // Seconds
-  if (mm !== '' && ss < 10) ss = `0${ss}`;
+  if (mm !== '' && ss < 10) {
+    ss = `0${ss}`;
+  }
 
   return `${hh}${mm}${ss}`;
 };
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = ms =>
+  new Promise(resolve => setTimeout(resolve, ms));
 
 // The pause-wait channel will return a value of false when the pause modal is
 // closed, which we can set to the paused flag. When the flag is set, the
 // Promise will be resolved.
-const pauseWait = () => Promise.resolve(paused = ipcRenderer.sendSync('pause-wait'));
+const pauseWait = () =>
+  Promise.resolve(paused = ipcRenderer.sendSync('pause-wait'));
 
-const countdown = (duration, view, onEachSecond) => {
+const countdown = (duration, counterView, onEachSecond) => {
+  let currentSecond = duration;
+
   const action = () => {
     optionalCallback(onEachSecond);
-    view.textContent = getFormattedTime(duration--);
+    counterView.textContent = getFormattedTime(currentSecond);
+    currentSecond -= 1;
   };
 
+
   return Promise.resolve((async () => {
-    // We'll be decrementing duration each second in action()
-    while (duration > 0) {
+    // The current second will be decremented each second in the action function
+    while (currentSecond > 0) {
       if (paused) {
         await pauseWait();
       } else {
@@ -98,7 +116,7 @@ const countdown = (duration, view, onEachSecond) => {
       }
     }
 
-    // Check for pause before ending countdown
+    // Check for pause before ending the countdown
     if (paused) {
       await pauseWait();
     }
@@ -160,7 +178,7 @@ ipcRenderer.on('start-timer', (evt, userSettings) => {
     domElements.progress.classList.add('red');
     domElements.info.textContent = text.info.coolDown;
     return countdown(breakDuration, domElements.counter, () => {
-      beepAudio.play();
+      domElements.audio.beep.play();
       setProgressBar();
     });
   };
@@ -179,13 +197,17 @@ ipcRenderer.on('start-timer', (evt, userSettings) => {
     domElements.buttons.restart.parentElement.style.display = '';
   };
 
-  const countdownAction = () => Promise.resolve(durationCountdown().then(breakDurationCountdown));
+  const countdownAction = async () => {
+    await durationCountdown();
+    await breakDurationCountdown();
+  };
 
   (async () => {
     resetTimer();
-    await Promise.all(
-      Array(numRepeats).fill(countdownAction)
-      .map(action => Promise.resolve().then(action)));
+    for (let stationsLeft = numRepeats - 1; stationsLeft >= 0; stationsLeft -= 1) {
+      // TODO: display the stations left value on the view
+      await countdownAction();
+    }
     endTimer();
   })();
 });

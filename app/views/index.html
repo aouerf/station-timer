@@ -10,6 +10,8 @@
   <!-- Hidden initially -->
   <body class="hide">
 
+    <audio id="beep" src="../assets/audio/beep.wav"></audio>
+
     <main>
       <!-- The counter will act as an Exit button at the end -->
       <h1 id="counter" title="Exit"></h1>
@@ -18,6 +20,7 @@
     </main>
 
     <!-- An Action Button should ideally be a Custom Element, but v1 of the API is not currently supported (Electron v1.4.13) -->
+    <!-- TODO: Make these into custom elements -->
     <div class="action-buttons">
 
       <div>
