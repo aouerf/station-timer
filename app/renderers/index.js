@@ -1,6 +1,7 @@
 const { ipcRenderer, remote } = require('electron');
 const numberToWords = require('number-to-words');
 
+// Object that caches all the DOM elements used
 const domElements = {
   remaining: document.querySelector('#remaining'),
   counter: document.querySelector('#counter'),
@@ -41,18 +42,18 @@ let settings = null;
 // Flag indicating whether or not the program is currently in a paused state
 let paused = false;
 
-// If a string is given and it is not empty, convert it to a "Sentence case" string
 const toSentenceCase = str =>
+  // If a string is given and it is not empty, convert it to a "Sentence case" string
   ((typeof str === 'string' && str.length > 0) ?
     str.charAt(0).toUpperCase() + str.substring(1).toLowerCase() :
     '');
 
-// If a single element is given, place it in an array
 const ensureArray = arr =>
+  // If a single element is given, place it in an array
   (Array.isArray(arr) ? arr : [arr]);
 
-// Executes a function if it is given and if not then a noop function is executed
 const optionalCallback = func =>
+  // Executes a function if it is given and if not then a noop function is executed
   (typeof func === 'function' ? func : () => {})();
 
 const skipTransition = (elements, action) => {
@@ -114,10 +115,10 @@ const getFormattedTime = (seconds) => {
 const sleep = ms =>
   new Promise(resolve => setTimeout(resolve, ms));
 
-// The pause-wait channel will return a value of false when the pause modal is
-// closed, which we can set to the paused flag. When the flag is set, the
-// Promise will be resolved.
 const pauseWait = () =>
+  // The pause-wait channel will return a value of false when the pause modal is
+  // closed, which we can set to the paused flag. When the flag is set, the
+  // Promise will be resolved.
   Promise.resolve(paused = ipcRenderer.sendSync('pause-wait'));
 
 const countdown = (duration, counterView, onEachSecond) => {
@@ -132,15 +133,21 @@ const countdown = (duration, counterView, onEachSecond) => {
   return Promise.resolve((async () => {
     // The current second will be decremented each second in the action function
     while (currentSecond > 0) {
+      /* eslint-disable no-await-in-loop */
       if (paused) {
+      // Since the loop should not continue when in a paused state,
+      // the loop is blocked until the pause promise is resolved
         await pauseWait();
       } else {
         action();
+        // After completing the countdown decrementing action,
+        // the loop must be blocked for a second (1000ms) before resuming the countdown
         await sleep(1000);
       }
+      /* eslint-enable no-await-in-loop */
     }
 
-    // Check for pause before ending the countdown
+    // Check for pause request before ending the countdown
     if (paused) {
       await pauseWait();
     }
@@ -249,7 +256,9 @@ ipcRenderer.on('start-timer', (evt, userSettings) => {
     resetTimer();
     for (let stationsLeft = numRepeats; stationsLeft > 0; stationsLeft -= 1) {
       setRemainingText(stationsLeft);
-      await countdownAction();
+      // Since we do not want the loop to continue until the cooldown promise is resolved,
+      // we wait for the asynchronous code to complete before moving on to the next iteration
+      await countdownAction(); // eslint-disable-line no-await-in-loop
       // This is called here to update the counter text before the loop is broken
       setRemainingText(stationsLeft - 1);
     }
