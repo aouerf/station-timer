@@ -1,6 +1,12 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 
-const DEVELOPMENT = true;
+/** @constant { boolean }
+ *
+ * Checks if the current environment is in development by looking for the asar package.
+ * If the package exists, then the app is in production mode.
+ * Otherwise (if it is not found), then the program is in development mode.
+ */
+const DEVELOPMENT = process.mainModule.filename.indexOf('app.asar') === -1;
 
 let mainWindow = null;
 let setupWindow = null;
@@ -9,7 +15,9 @@ let pauseWindow = null;
 const initializeWindow = (windowType, windowName) => {
   windowType.loadURL(`file://${__dirname}/views/${windowName}.html`);
   windowType.setMenu(null);
-  windowType.webContents.openDevTools(DEVELOPMENT);
+  if (DEVELOPMENT) {
+    windowType.webContents.openDevTools();
+  }
 
   windowType.once('ready-to-show', windowType.show);
 };
