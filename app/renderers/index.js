@@ -2,19 +2,19 @@ const { ipcRenderer, remote } = require('electron');
 const numberToWords = require('number-to-words');
 
 const domElements = {
-  remaining: document.getElementById('remaining'),
-  counter: document.getElementById('counter'),
-  progress: document.getElementById('progress'),
-  info: document.getElementById('info'),
+  remaining: document.querySelector('#remaining'),
+  counter: document.querySelector('#counter'),
+  progress: document.querySelector('#progress'),
+  info: document.querySelector('#info'),
   buttons: {
-    pause: document.getElementById('pause'),
-    restart: document.getElementById('restart'),
-    muteOn: document.getElementById('mute-on'),
-    muteOff: document.getElementById('mute-off'),
-    exit: document.getElementById('exit'),
+    pause: document.querySelector('#pause'),
+    restart: document.querySelector('#restart'),
+    muteOn: document.querySelector('#mute-on'),
+    muteOff: document.querySelector('#mute-off'),
+    exit: document.querySelector('#exit'),
   },
   audio: {
-    beep: document.getElementById('beep'),
+    beep: document.querySelector('#beep'),
   },
 };
 
@@ -62,6 +62,18 @@ const skipTransition = (elements, action) => {
     (() => el.offsetHeight)(); // Trigger CSS reflow to flush changes
     el.classList.remove('skip-transition');
   });
+};
+
+const mute = () => {
+  remote.getCurrentWebContents().setAudioMuted(true);
+  domElements.buttons.muteOn.hideButton();
+  domElements.buttons.muteOff.showButton();
+};
+
+const unmute = () => {
+  remote.getCurrentWebContents().setAudioMuted(false);
+  domElements.buttons.muteOff.hideButton();
+  domElements.buttons.muteOn.showButton();
 };
 
 const setProgressBar = () => {
@@ -117,7 +129,6 @@ const countdown = (duration, counterView, onEachSecond) => {
     currentSecond -= 1;
   };
 
-
   return Promise.resolve((async () => {
     // The current second will be decremented each second in the action function
     while (currentSecond > 0) {
@@ -136,26 +147,22 @@ const countdown = (duration, counterView, onEachSecond) => {
   })());
 };
 
-domElements.buttons.pause.addEventListener('click', () => {
+domElements.buttons.pause.setAction(() => {
   paused = true;
   ipcRenderer.send('pause');
 });
 
-domElements.buttons.restart.addEventListener('click', () => remote.getCurrentWebContents().send('start-timer', settings));
+domElements.buttons.restart.setAction(() => remote.getCurrentWebContents().send('start-timer', settings));
 
-domElements.buttons.muteOn.addEventListener('click', () => {
-  remote.getCurrentWebContents().setAudioMuted(true);
-  domElements.buttons.muteOn.parentElement.style.display = 'none';
-  domElements.buttons.muteOff.parentElement.style.display = '';
+domElements.buttons.muteOn.setAction(() => {
+  mute();
 });
 
-domElements.buttons.muteOff.addEventListener('click', () => {
-  remote.getCurrentWebContents().setAudioMuted(false);
-  domElements.buttons.muteOff.parentElement.style.display = 'none';
-  domElements.buttons.muteOn.parentElement.style.display = '';
+domElements.buttons.muteOff.setAction(() => {
+  unmute();
 });
 
-domElements.buttons.exit.addEventListener('click', () => ipcRenderer.send('exit'));
+domElements.buttons.exit.setAction(() => ipcRenderer.send('exit'));
 
 // Since the counter has no pointer events when counting, this will only
 // trigger at the end when the end class is added to the counter, which
@@ -167,9 +174,15 @@ ipcRenderer.on('start-timer', (evt, userSettings) => {
   settings = userSettings;
 
   const resetTimer = () => {
+    // Set muted button based on whether or not the audio is mutedd
+    if (remote.getCurrentWebContents().isAudioMuted()) {
+      mute();
+    } else {
+      unmute();
+    }
     // Reset elements to their intended initial visibility
-    domElements.buttons.restart.parentElement.style.display = 'none';
-    domElements.buttons.pause.parentElement.style.display = '';
+    domElements.buttons.restart.hideButton();
+    domElements.buttons.pause.showButton();
     // Remove all classes from the views
     document.body.classList = '';
     domElements.counter.classList = '';
@@ -206,8 +219,8 @@ ipcRenderer.on('start-timer', (evt, userSettings) => {
     domElements.counter.textContent = text.counter.end;
     domElements.info.textContent = text.info.complete;
     // Setting end visibility for Action Buttons
-    domElements.buttons.pause.parentElement.style.display = 'none';
-    domElements.buttons.restart.parentElement.style.display = '';
+    domElements.buttons.pause.hideButton();
+    domElements.buttons.restart.showButton();
   };
 
   const setRemainingText = (stationsLeft) => {

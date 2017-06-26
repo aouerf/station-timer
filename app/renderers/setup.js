@@ -44,4 +44,4 @@ setupForm.addEventListener('submit', (evt) => {
   win.destroy();
 });
 
-document.getElementById('exit').addEventListener('click', () => ipcRenderer.send('exit'));
+document.querySelector('#exit').setAction(() => ipcRenderer.send('exit'));

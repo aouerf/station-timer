@@ -3,14 +3,14 @@
     /* This is the only workaround I could think of (besides having a duplicate copy of the needed styles) */
     @import url('../styles/base.css');
 
-    :host {
+    .container {
       display: inline-flex;
       flex-direction: column-reverse;
       align-items: center;
       justify-content: center;
     }
 
-    button {
+    .button {
       position: relative;
       display: flex;
       align-items: center;
@@ -23,7 +23,7 @@
       background-color: transparent;
     }
 
-    button::before {
+    .button::before {
       content: '';
       position: absolute;
       z-index: -1;
@@ -37,13 +37,13 @@
       will-change: width, height, opacity;
     }
 
-    button:active::before {
+    .button:active::before {
       width: 3rem;
       height: 3rem;
       opacity: 0.3;
     }
 
-    button svg {
+    .button .icon-container {
       width: 2.25rem;
       height: 2.25rem;
       fill: var(--color-grey);
@@ -51,19 +51,19 @@
       will-change: fill;
     }
 
-    button:focus svg {
+    .button:focus .icon-container {
       fill: var(--color-primary-light);
     }
 
-    button:hover svg {
+    .button:hover .icon-container {
       fill: var(--color-primary);
     }
 
-    button:active svg {
+    .button:active .icon-container {
       fill: var(--color-primary-dark);
     }
 
-    p {
+    .label {
       display: inline-block;
       padding: 0.25rem 0.5rem;
       font-size: 0.8em;
@@ -74,17 +74,19 @@
       transition: opacity 0.3s var(--curve-sharp);
     }
 
-    button:hover ~ p {
+    .button:hover ~ .label {
       opacity: 0.7;
     }
   </style>
 
-  <button>
-    <svg viewBox="0 0 24 24">
-      <path class="icon" d="" />
-    </svg>
-  </button>
-  <p class="label"></p>
+  <div class="container">
+    <button class="button">
+      <svg class="icon-container" viewBox="0 0 24 24">
+        <path class="icon" d="" />
+      </svg>
+    </button>
+    <p class="label"></p>
+  </div>
 </template>
 
 <script src="action-button.js"></script>

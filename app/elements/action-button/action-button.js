@@ -15,14 +15,10 @@ class ActionButton extends HTMLElement {
     shadowRoot.appendChild(template.content.cloneNode(true));
 
     this._components = {
-      label: {
-        name: 'label',
-        element: shadowRoot.querySelector('.label'),
-      },
-      icon: {
-        name: 'icon',
-        element: shadowRoot.querySelector('.icon'),
-      },
+      container: shadowRoot.querySelector('.container'),
+      button: shadowRoot.querySelector('.button'),
+      label: shadowRoot.querySelector('.label'),
+      icon: shadowRoot.querySelector('.icon'),
     };
   }
 
@@ -31,7 +27,7 @@ class ActionButton extends HTMLElement {
   }
 
   get label() {
-    return this.getAttributeValue(this._components.label.name);
+    return this.getAttributeValue(this._components.label.className);
   }
 
   set label(label) {
@@ -39,11 +35,11 @@ class ActionButton extends HTMLElement {
       return;
     }
 
-    this._components.label.element.textContent = label;
+    this._components.label.textContent = label;
   }
 
   get icon() {
-    return this.getAttributeValue(this._components.icon.name);
+    return this.getAttributeValue(this._components.icon.className);
   }
 
   set icon(icon) {
@@ -51,21 +47,57 @@ class ActionButton extends HTMLElement {
       return;
     }
 
-    this._components.icon.element.setAttribute('d', icon);
+    this._components.icon.setAttribute('d', icon);
   }
 
-  // connectedCallback() {
-  // }
+  connectedCallback() {
+    // Action is a noop function by default
+    this.setAction(() => {});
+  }
 
-  // disconnectedCallback() {
-  // }
+  disconnectedCallback() {
+    // Remove action from element on callback
+    this.removeAction();
+  }
 
   attributeChangedCallback(attributeName, oldValue, newValue) {
-    if (attributeName === this._components.label.name) {
+    if (attributeName === this._components.label.className) {
       this.label = newValue;
-    } else if (attributeName === this._components.icon.name) {
+    // Must check with baseVal property for icon because the className is a SVGAnimatedString object
+    } else if (attributeName === this._components.icon.className.baseVal) {
       this.icon = newValue;
     }
+  }
+
+  setAction(action) {
+    if (typeof action !== 'function') {
+      return;
+    }
+
+    // Remove the current action and replace it with the new one
+    this.removeAction();
+    this._action = action;
+    this._components.button.addEventListener('click', this._action);
+  }
+
+  removeAction() {
+    this._components.button.removeEventListener('click', this._action);
+  }
+
+  hideButton() {
+    this.setHidden(true);
+  }
+
+  showButton() {
+    this.setHidden(false);
+  }
+
+  setHidden(hidden) {
+    if (typeof hidden !== 'boolean') {
+      return;
+    }
+
+    this._components.container.style.display = hidden ? 'none' : '';
   }
 }
 
