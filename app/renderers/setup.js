@@ -34,8 +34,11 @@ setupForm.addEventListener('submit', (evt) => {
   }
 
   ipcRenderer.send('setup-timer',
+    // An object is created from the form data
+    // The names of the form fields are used as keys
+    // The values of the fields are parsed from the supplied string to an integer
     Object.assign(...Array.from(new FormData(setupForm))
-      .map(([k, v]) => ({ [k]: v }))));
+      .map(([k, v]) => ({ [k]: parseInt(v, 10) }))));
 
   const win = remote.getCurrentWindow();
   // Lose focus before closing setup modal to prevent screen flash

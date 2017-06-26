@@ -25,14 +25,17 @@
     "dist": "build",
     "postinstall": "install-app-deps"
   },
-  "directories": {
-    "app": "./app"
-  },
   "build": {
+    "directories": {
+      "buildResources": "./build/",
+      "output": "./dist/"
+    },
     "appId": "com.aouerfelli.station-timer",
     "win": {
       "target": [
         "nsis",
+        "nsis-web",
+        "portable",
         "zip"
       ]
     },
@@ -51,8 +54,8 @@
   },
   "devDependencies": {
     "electron": "^1.6.11",
-    "electron-builder": "^10.17.3",
-    "eslint": "^3.19.0",
+    "electron-builder": "^19.8.0",
+    "eslint": "^4.1.1",
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.6.0",
     "nodemon": "^1.11.0"

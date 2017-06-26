@@ -20,6 +20,7 @@ class ActionButton extends HTMLElement {
       label: shadowRoot.querySelector('.label'),
       icon: shadowRoot.querySelector('.icon'),
     };
+    this._action = undefined;
   }
 
   getAttributeValue(attributeName) {
