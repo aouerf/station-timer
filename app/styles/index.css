@@ -23,6 +23,11 @@ body.dim::after {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
+#remaining {
+  font-size: 1.25em;
+  opacity: 0.75;
+}
+
 #counter {
   --color-counter: var(--color-grey);
   color: var(--color-counter);
@@ -65,7 +70,7 @@ body.dim::after {
   --color-progress: var(--color-primary);
   background-color: var(--color-progress);
   width: 0;
-  height: 0.25rem;
+  height: 0.3125rem;
   margin: auto;
   margin-bottom: 1.5rem;
   border-radius: var(--corner-radius);

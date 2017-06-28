@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>Station Timer Setup</title>
     <link rel="stylesheet" href="../styles/base.css">
     <link rel="stylesheet" href="../styles/setup.css">
+    <link rel="import" href="../elements/action-button/action-button.html">
   </head>
 
   <body>
       <main>
         <form id="setup">
           <fieldset>
-            <legend>Set Up Your Timer</legend>
+            <legend>Set up your timer</legend>
             <!-- Placeholder attribute is used to make UI function as intended (content doesn't matter, it will be hidden) -->
 
             <div class="form-item">
@@ -43,16 +44,8 @@
         </form>
       </main>
 
-      <!-- An Action Button should ideally be a Custom Element, but v1 of the API is not currently supported (Electron v1.4.13) -->
       <div class="action-buttons">
-        <div>
-          <button id="exit">
-            <svg viewBox="0 0 24 24">
-              <path d="M19,3H5C3.89,3 3,3.89 3,5V9H5V5H19V19H5V15H3V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M10.08,15.58L11.5,17L16.5,12L11.5,7L10.08,8.41L12.67,11H3V13H12.67L10.08,15.58Z" />
-            </svg>
-          </button>
-          <p>Exit</p>
-        </div>
+        <action-button id="exit" label="Exit" icon="M19,3H5C3.89,3 3,3.89 3,5V9H5V5H19V19H5V15H3V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M10.08,15.58L11.5,17L16.5,12L11.5,7L10.08,8.41L12.67,11H3V13H12.67L10.08,15.58Z"></action-button>
       </div>
 
     <script>
